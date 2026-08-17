@@ -1,6 +1,6 @@
 # Fase 07 — Painel administrativo (appointments e customers)
 
-Status: doing
+Status: done (concluída em 2026-08-13)
 
 ## Objetivo
 
@@ -34,9 +34,9 @@ Owner/admin acompanham a agenda do tenant; staff acompanha a própria agenda.
 
 ## Critérios de aceite
 
-- [ ] Matriz de autorização da spec multi-tenancy coberta para appointments/customers.
-- [ ] Cancelamento admin libera horário comprovadamente.
-- [ ] Listagens admin com paginação obrigatória (sem varredura completa — dívida Moira).
+- [x] Matriz de autorização da spec multi-tenancy coberta para appointments/customers.
+- [x] Cancelamento admin libera horário comprovadamente.
+- [x] Listagens admin com paginação obrigatória (sem varredura completa — dívida Moira).
 
 ## Contrato implementado
 
@@ -71,3 +71,17 @@ Owner/admin acompanham a agenda do tenant; staff acompanha a própria agenda.
   execução Testcontainers ficou bloqueada nesta sessão pela ausência do daemon Docker.
 - Pendente: executar essa suíte contra PostgreSQL real, confirmar o contrato de erro em todas as
   matrizes cross-tenant e então marcar a fase como `done`.
+- Fechamento em 2026-08-13: o fixture JDBC agora envia `Timestamp.from(...)` para todas as
+  colunas `TIMESTAMPTZ`; a corrida `cancel × complete` submete ambas as requisições antes de
+  liberar o latch e comprova uma única resposta `200` e uma `409`, com slots consistentes com a
+  transição vencedora. A suíte cobre owner/admin, staff limitado ao próprio calendário, negação
+  de customers para staff, 401 sem JWT, 403 cross-tenant, filtros/paginação, detalhes e conflitos
+  terminais.
+- Cancelamento administrativo invalida, após commit, o cache Redis de disponibilidade do
+  calendário/dia afetado; `complete` e `no_show` preservam os locks e não invalidam o cache.
+  O cenário de integração aquece Redis, confirma a remoção dos slots e verifica o reaparecimento
+  do horário em `available-slots`.
+- Validação Java 21/Testcontainers verde: `test -Pintegration -Dtest=AdminPanelIntegrationTest`
+  (7), `spotless:check`, `test` (250), `test -Dtest=ArchitectureTest` (5),
+  `verify -Pintegration` (45) e `verify -Pall-tests` (295). `git diff --check` também passou.
+- Não houve mudança de endpoint, payload, migration ou ADR. A fase 06 permanece `doing`.

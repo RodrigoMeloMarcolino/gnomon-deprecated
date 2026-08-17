@@ -6,6 +6,7 @@ import io.gnomon.booking.application.port.in.AdminAppointmentTransitionUseCase;
 import io.gnomon.booking.application.port.out.AdminAppointmentQueryPort;
 import io.gnomon.booking.application.port.out.AdminTenantAccessPort;
 import io.gnomon.booking.application.port.out.AppointmentRepository;
+import io.gnomon.booking.application.port.out.BookingAvailabilityCachePort;
 import io.gnomon.booking.application.port.out.StaffCalendarAccessPort;
 import io.gnomon.booking.domain.exception.BookingDomainException;
 import io.gnomon.booking.domain.model.Appointment;
@@ -26,16 +27,19 @@ public class AdminAppointmentTransitionService implements AdminAppointmentTransi
   private final StaffCalendarAccessPort staffCalendars;
   private final AdminAppointmentQueryPort queries;
   private final AppointmentRepository appointments;
+  private final BookingAvailabilityCachePort availabilityCache;
 
   public AdminAppointmentTransitionService(
       AdminTenantAccessPort tenants,
       StaffCalendarAccessPort staffCalendars,
       AdminAppointmentQueryPort queries,
-      AppointmentRepository appointments) {
+      AppointmentRepository appointments,
+      BookingAvailabilityCachePort availabilityCache) {
     this.tenants = tenants;
     this.staffCalendars = staffCalendars;
     this.queries = queries;
     this.appointments = appointments;
+    this.availabilityCache = availabilityCache;
   }
 
   @Override
@@ -60,7 +64,15 @@ public class AdminAppointmentTransitionService implements AdminAppointmentTransi
       throw new BookingException(exception.code(), exception.getMessage());
     }
     appointments.updateStatus(access.tenantId(), id, changed.status());
-    if (transition == Transition.CANCEL) appointments.deleteSlots(access.tenantId(), id);
+    if (transition == Transition.CANCEL) {
+      appointments.deleteSlots(access.tenantId(), id);
+      availabilityCache.invalidateBookingDayAfterCommit(
+          access.tenantId(),
+          current.calendarId(),
+          current.offeringId(),
+          current.startAt(),
+          java.time.ZoneId.of(current.calendarTimezoneSnapshot()));
+    }
     registerEvent(transition, id, access.tenantId(), current.calendarId());
     return queries.findByTenantIdAndId(access.tenantId(), id).orElseThrow();
   }

@@ -1,6 +1,6 @@
 # Checkpoint de implementação paralela — fases 01–09 (pós-onda 4)
 
-Atualizado: 2026-08-06
+Atualizado: 2026-08-13
 
 Este arquivo é o handoff operacional para retomar a construção do backend em outra sessão sem
 reconstituir o contexto da conversa. A fonte normativa continua sendo o PRD, os ADRs, as specs e
@@ -136,14 +136,26 @@ reforçados (ADR 0019), sem alterar endpoints, JSON ou migrations. Em 2026-07-29
 Spotless, unitário (213), ArchUnit isolado (5), integração (33) e all-tests (246) passaram com
 Java 21 em contêiner.
 
+## Checkpoint 07 — painel administrativo (concluído)
+
+- A suíte `AdminPanelIntegrationTest` foi corrigida e executada contra PostgreSQL 16 e Redis 7
+  reais: fixtures usam `Timestamp.from(...)` em `TIMESTAMPTZ`, a corrida de transição tem uma
+  única vencedora (`200`/`409`) e o estado/slots permanecem consistentes.
+- Owner/admin acessam appointments e customers; staff fica limitado ao próprio calendário e não
+  acessa customers; recursos entre tenants retornam `403` e rotas administrativas sem JWT,
+  `401`. Listagens, paginação, detalhes e conflitos terminais estão cobertos.
+- Cancelamento remove slots e invalida pós-commit a disponibilidade Redis do dia/calendário;
+  `complete` e `no_show` mantêm os slots. O teste aquece o cache e confirma que o horário volta a
+  ser público após cancelamento.
+- Gates Java 21 verdes: painel focalizado (7), Spotless, unitários (250), ArchUnit (5),
+  integração (45), all-tests (295) e `git diff --check`. Não houve migration, alteração de
+  contrato ou ADR. A fase 06 continua `doing`.
+
 ## Próxima ação exata
 
-Continuar a fase 07 a partir da implementação tenant-scoped de appointments e customers:
-
-1. completar os testes HTTP e de integração de filtros, paginação, isolamento, staff, locks e
-   concorrência;
-2. executar todos os gates com Java 21 e Docker/Testcontainers;
-3. somente então marcar a fase 07 como `done`.
+Iniciar a fase 07.5 preservando a futura migration `V7__tenant_portfolio.sql` e implementando o
+código que usa esse schema. A fase 08 mantém `V8`; aplicá-la antes de `V7` quebraria a ordem
+futura do Flyway.
 
 A fase 06 permanece `doing`: o smoke real Collector → Loki → Grafana ainda requer host com
 Docker Buildx funcional.
@@ -158,12 +170,8 @@ Docker Buildx funcional.
   integração próprios.
 - `spotless:check`, compilação Java 21 e `test` passaram após limpeza de `target`; ArchUnit ficou
   verde com 5 regras.
-- A fase 07 permanece `doing`: ainda faltam os testes HTTP/PostgreSQL de filtros, paginação,
-  isolamento cross-tenant, autorização staff, concorrência de transições e liberação/preservação
-  de slots.
-- O próximo slice seguro é separar `AdminAppointmentQueryService` de
-  `AdminAppointmentTransitionService` e migrar as exceções/handlers para application exceptions,
-  sem alterar o contrato HTTP.
+- Registro histórico: nesta data a fase 07 ainda estava `doing`; esses testes e o fechamento
+  completo foram concluídos no checkpoint 07 de 2026-08-13 acima.
 
 ### Slice 07-A — separação query/transição (concluído em 2026-08-06)
 
@@ -176,8 +184,8 @@ Docker Buildx funcional.
 - `BookingDomainException` é traduzida no service de transição para `BookingException`,
   preservando o handler e o contrato HTTP existente.
 - Compilação Java 21, `spotless:check` e `test` passaram no container Maven.
-- Próximo slice: testes HTTP/PostgreSQL da fase 07 para filtros, paginação, isolamento cross-tenant,
-  autorização staff, concorrência de transições e liberação/preservação de slots.
+- Próximo slice histórico: testes HTTP/PostgreSQL da fase 07 para filtros, paginação, isolamento
+  cross-tenant, autorização staff, concorrência de transições e liberação/preservação de slots.
 
 ### Slice 07-B — suíte do painel administrativo (implementado em 2026-08-06)
 
@@ -185,10 +193,8 @@ Docker Buildx funcional.
   ao próprio calendário, leitura cross-tenant, customers inferidos por appointments, cancelamento
   com remoção de locks e corrida de transições com uma única mudança efetiva.
 - Compilação Java 21, `spotless:check` e `test` passaram.
-- A execução de `-Pintegration` não pôde iniciar porque o ambiente desta sessão não expôs o
-  daemon Docker ao Testcontainers; é a próxima validação obrigatória antes de fechar a fase 07.
-- Próxima ação exata: repetir `./mvnw verify -Pintegration` em host com Docker/Testcontainers e
-  corrigir qualquer divergência revelada pelo PostgreSQL real.
+- A execução de `-Pintegration` não pôde iniciar naquela sessão porque o daemon Docker não estava
+  exposto ao Testcontainers; a validação foi concluída no checkpoint 07 de 2026-08-13.
 
 ## Workstream 07.5 — portfólio (contrato documental congelado)
 
