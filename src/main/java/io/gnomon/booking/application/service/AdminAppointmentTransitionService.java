@@ -29,6 +29,10 @@ public class AdminAppointmentTransitionService implements AdminAppointmentTransi
   private final AppointmentRepository appointments;
   private final BookingAvailabilityCachePort availabilityCache;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public AdminAppointmentTransitionService(
       AdminTenantAccessPort tenants,
       StaffCalendarAccessPort staffCalendars,

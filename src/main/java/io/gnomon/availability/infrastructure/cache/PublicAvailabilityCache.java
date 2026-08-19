@@ -32,6 +32,10 @@ public final class PublicAvailabilityCache implements PublicAvailabilityCachePor
   private final Duration ttl;
   private final Duration versionTtl;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public PublicAvailabilityCache(CacheStore store, ObjectMapper objectMapper, Duration ttl) {
     this.store = store;
     this.objectMapper = objectMapper;

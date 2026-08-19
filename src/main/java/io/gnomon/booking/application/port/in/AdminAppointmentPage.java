@@ -8,4 +8,8 @@ public record AdminAppointmentPage(
     int size,
     long totalElements,
     int totalPages,
-    boolean last) {}
+    boolean last) {
+  public AdminAppointmentPage {
+    content = List.copyOf(content);
+  }
+}

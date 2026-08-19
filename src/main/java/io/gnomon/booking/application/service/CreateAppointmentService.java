@@ -132,6 +132,10 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         clock);
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public CreateAppointmentService(
       BookingCatalogPort catalog,
       BookingAvailabilityPort availability,
@@ -162,7 +166,7 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
     UUID calendarId = command == null ? null : command.calendarId();
     UUID appointmentId = null;
     try {
-      requireCommand(command);
+      command = requireCommand(command);
       BookingContext context =
           catalog.requireSchedulableOffering(
               command.tenantSlug(), command.calendarId(), command.offeringId());
@@ -286,7 +290,7 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
     return result;
   }
 
-  private static void requireCommand(CreateAppointmentCommand command) {
+  private static CreateAppointmentCommand requireCommand(CreateAppointmentCommand command) {
     if (command == null
         || command.tenantSlug() == null
         || command.tenantSlug().isBlank()
@@ -295,6 +299,7 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         || command.startAt() == null) {
       throw new BookingException("validation_error", "booking request is incomplete");
     }
+    return command;
   }
 
   private static String normalizeIdempotencyKey(String value) {

@@ -6,4 +6,8 @@ import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record AvailableSlotsResponse(List<Instant> availableStartTimes) {}
+public record AvailableSlotsResponse(List<Instant> availableStartTimes) {
+  public AvailableSlotsResponse {
+    availableStartTimes = List.copyOf(availableStartTimes);
+  }
+}

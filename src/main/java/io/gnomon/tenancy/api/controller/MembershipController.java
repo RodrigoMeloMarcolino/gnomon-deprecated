@@ -32,6 +32,10 @@ public class MembershipController {
 
   private final ManageMembershipUseCase manageMembership;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public MembershipController(ManageMembershipUseCase manageMembership) {
     this.manageMembership = manageMembership;
   }

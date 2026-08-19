@@ -25,6 +25,10 @@ public class PostgresOccupiedSlotAdapter implements OccupiedSlotPort {
 
   private final JdbcTemplate jdbcTemplate;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public PostgresOccupiedSlotAdapter(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }

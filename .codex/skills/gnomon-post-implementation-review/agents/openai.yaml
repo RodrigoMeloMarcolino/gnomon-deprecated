@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gnomon Post-Implementation Review"
+  short_description: "Run independent Gnomon PR review and publish evidence."
+  default_prompt: "Review this Gnomon implementation independently and publish the required evidence report."

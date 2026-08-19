@@ -21,7 +21,8 @@ verdes). Status: `todo` | `doing` | `done`.
 | [07](07-painel-admin.md) | Painel administrativo (appointments, customers) | done | spec multi-tenancy, PRD 6.4 |
 | [08](08-cancelamento-remarcacao.md) | Cancelamento e remarcação via token | todo | ADR 0008, livedoc 13–14 |
 | [07.5](07.5-tenant-portfolio.md) | Portfólio multi-tenant (workstream paralelo) | todo | ADRs 0020–0021, feature tenant-portfolio |
-| [09](09-gates-ci.md) | Gates de CI e hardening | todo | docs/ci.md, ADR 0002 |
+| [09-A](09-gates-ci.md) | Development Process Hardening | doing | ADR 0024 |
+| [09-B](09-gates-ci.md) | Fechamento E2E, drift e índices | todo | docs/ci.md, ADR 0002 |
 | [INT-01](integration-umbra-01.5.md) | Fundação de integração Umbra | done | ADR 0023; fases 01–04 e 09 |
 
 ## Ordem e dependências
@@ -33,7 +34,7 @@ verdes). Status: `todo` | `doing` | `done`.
                                       ├→ 07 admin
                                       ├→ 07.5 portfólio
                                       └→ 08 cancel/remarcação
-05 + 06 + 07 + 07.5 + 08 → 09
+04 → 09-A; 05 + 06 + 07 + 07.5 + 08 → 09-B
 ```
 
 - 00.5 (hardening docs-only) é bloqueante da 01: emenda specs/ADRs/tasks com as lições do
