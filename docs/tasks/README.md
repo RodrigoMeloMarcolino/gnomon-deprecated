@@ -24,6 +24,7 @@ verdes). Status: `todo` | `doing` | `done`.
 | [09-A](09-gates-ci.md) | Development Process Hardening | doing | ADR 0024 |
 | [09-B](09-gates-ci.md) | Fechamento E2E, drift e índices | todo | docs/ci.md, ADR 0002 |
 | [INT-01](integration-umbra-01.5.md) | Fundação de integração Umbra | done | ADR 0023; fases 01–04 e 09 |
+| [10](10-conversao-gnomon-mock.md) | Conversão em mock/reference e abertura do sucessor Node.js | done | ADR 0025 |
 
 ## Ordem e dependências
 

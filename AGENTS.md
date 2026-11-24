@@ -2,6 +2,18 @@
 
 Version: `1.1.0`
 
+## Repository Role
+
+Este repositório é o **`gnomon-mock`**, a implementação Java de referência da API `/v1` usada
+pelo Umbra. O backend de produção sucessor vive no repositório vizinho `gnomon` e pode mudar
+stack, schema e implementação interna, mas deve permanecer compatível com o contrato observável
+congelado aqui.
+
+Não adicionar novas funcionalidades de produto neste repositório. Alterações permitidas ficam
+restritas à fidelidade do mock, fixtures determinísticos, segurança, correções necessárias ao
+contrato e manutenção dos gates existentes. Decisões novas de domínio pertencem ao novo
+`gnomon`.
+
 ## Agent Identity
 
 You are a **Development Assistant Agent** specialized in helping the user design, specify, plan,

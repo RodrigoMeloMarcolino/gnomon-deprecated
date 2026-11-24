@@ -1,9 +1,13 @@
-# Gnomon
+# Gnomon Mock
 
-Backend do **Sun Catcher**, o SaaS de agendamento multi-tenant. `gnomon` é o nome do serviço
-de API; o produto resultante da combinação gnomon + [umbra](../umbra) (frontend) é o Sun
-Catcher. Ver a convenção completa no repo central de documentação
-[ephemeris](../ephemeris).
+Implementação Java de referência da API `/v1` do **Sun Catcher**, preservada como mock executável
+para o desenvolvimento e os testes de compatibilidade do [Umbra](../umbra). O sucessor de
+produção em Node.js vive no repositório vizinho [gnomon](../gnomon).
+
+Este repositório mantém o comportamento legado, o OpenAPI, os fixtures e os smokes que formam o
+baseline de compatibilidade. Novas decisões de produto e evolução do backend pertencem ao novo
+`gnomon`; mudanças aqui devem se limitar à fidelidade do mock, segurança e manutenção do
+contrato `/v1`. Ver a convenção completa no repo central [ephemeris](../ephemeris).
 
 O Sun Catcher é a recriação do [Moira](https://github.com/RodrigoMeloMarcolino/moira) em stack Java,
 evoluindo o produto de provider único para **multi-tenancy com múltiplos calendários**: cada
