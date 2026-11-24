@@ -26,7 +26,7 @@
     <dependency-check.version>12.1.3</dependency-check.version>
     <!-- Boot 4 não gerencia mais testcontainers/rest-assured: versões fixadas aqui -->
     <testcontainers.version>2.0.5</testcontainers.version>
-    <rest-assured.version>6.0.1</rest-assured.version>
+    <rest-assured.version>6.3.0</rest-assured.version>
     <libphonenumber.version>9.0.32</libphonenumber.version>
     <springdoc.version>3.0.3</springdoc.version>
     <opentelemetry.instrumentation.version>2.30.0</opentelemetry.instrumentation.version>
