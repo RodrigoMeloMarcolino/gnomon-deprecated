@@ -1,0 +1,15 @@
+name: nightly-full
+on:
+  schedule: [{cron: "43 2 * * *"}]
+  workflow_dispatch:
+permissions: {contents: read, security-events: write}
+jobs:
+  full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with: {distribution: temurin, java-version: '21', cache: maven}
+      - run: ./mvnw --batch-mode verify -Pall-tests,quality,security
+        env: {NVD_API_KEY: "${{ secrets.NVD_API_KEY }}"}

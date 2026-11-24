@@ -76,6 +76,10 @@ public class AppointmentJdbcAdapter implements AppointmentRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public AppointmentJdbcAdapter(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }

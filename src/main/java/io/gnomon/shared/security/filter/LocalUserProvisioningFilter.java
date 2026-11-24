@@ -31,6 +31,10 @@ public final class LocalUserProvisioningFilter extends OncePerRequestFilter {
   private final ObjectMapper objectMapper;
   private final boolean requireVerifiedEmail;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public LocalUserProvisioningFilter(
       ProvisionLocalUserUseCase provisionLocalUser,
       ObjectMapper objectMapper,

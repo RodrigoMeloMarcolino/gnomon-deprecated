@@ -6,6 +6,7 @@ import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Gates de arquitetura do ADR 0002: dependências permitidas entre camadas — {@code api →
@@ -51,6 +52,44 @@ class ArchitectureTest {
           .should()
           .dependOnClassesThat()
           .resideInAPackage("..infrastructure..");
+
+  @ArchTest
+  static final ArchRule apiDoesNotDependOnOutputPorts =
+      noClasses()
+          .that()
+          .resideInAPackage("..api..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..application.port.out..");
+
+  @ArchTest
+  static final ArchRule apiDoesNotUseTransactions =
+      noClasses().that().resideInAPackage("..api..").should().beAnnotatedWith(Transactional.class);
+
+  @ArchTest
+  static final ArchRule apiDoesNotDependOnRepositories =
+      noClasses()
+          .that()
+          .resideInAPackage("..api..")
+          .should()
+          .dependOnClassesThat()
+          .haveSimpleNameEndingWith("Repository");
+
+  @ArchTest
+  static final ArchRule sharedDoesNotDependOnBusinessModules =
+      noClasses()
+          .that()
+          .resideInAPackage("io.gnomon.shared..")
+          .and()
+          .resideOutsideOfPackage("io.gnomon.shared.security..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAnyPackage(
+              "io.gnomon.availability..",
+              "io.gnomon.booking..",
+              "io.gnomon.catalog..",
+              "io.gnomon.customers..",
+              "io.gnomon.tenancy..");
 
   @ArchTest
   static final ArchRule crossModuleCatalogAdaptersUseCatalogInputPorts =

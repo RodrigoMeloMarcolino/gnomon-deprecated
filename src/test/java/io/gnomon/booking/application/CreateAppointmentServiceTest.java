@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import io.gnomon.booking.application.exception.BookingException;
@@ -75,7 +77,8 @@ class CreateAppointmentServiceTest {
             appointmentFingerprint,
             slotGenerator,
             Clock.fixed(NOW, ZoneOffset.UTC));
-    when(catalog.requireSchedulableOffering("barbearia-solar", CALENDAR_ID, OFFERING_ID))
+    lenient()
+        .when(catalog.requireSchedulableOffering("barbearia-solar", CALENDAR_ID, OFFERING_ID))
         .thenReturn(context());
   }
 
@@ -219,6 +222,24 @@ class CreateAppointmentServiceTest {
         .isEqualTo("validation_error");
 
     verify(appointments, never()).findByTenantIdAndIdempotencyKey(any(), any());
+  }
+
+  @Test
+  void create_whenCommandIsNull_shouldReturnValidationErrorWithoutCallingPorts() {
+    assertThatThrownBy(() -> service.create(null))
+        .isInstanceOf(BookingException.class)
+        .extracting(exception -> ((BookingException) exception).code())
+        .isEqualTo("validation_error");
+
+    verifyNoInteractions(
+        catalog,
+        availability,
+        availabilityCache,
+        customers,
+        appointments,
+        phoneCanonicalizer,
+        appointmentFingerprint,
+        slotGenerator);
   }
 
   @Test

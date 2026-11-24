@@ -1,6 +1,6 @@
 # Checkpoint de implementação paralela — fases 01–09 (pós-onda 4)
 
-Atualizado: 2026-08-13
+Atualizado: 2026-08-18
 
 Este arquivo é o handoff operacional para retomar a construção do backend em outra sessão sem
 reconstituir o contexto da conversa. A fonte normativa continua sendo o PRD, os ADRs, as specs e
@@ -152,6 +152,23 @@ Java 21 em contêiner.
   contrato ou ADR. A fase 06 continua `doing`.
 
 ## Próxima ação exata
+
+## Checkpoint 09-A — remediação SpotBugs (em andamento, 2026-08-18)
+
+- O baseline original tinha 40 findings medium/high; a correção local de validação do booking
+  removeu o único high, deixando 39 medium.
+- 19 findings reais foram corrigidos: validação de comando nulo, imutabilidade das sete
+  estruturas com coleções, timezone explícito em Tenant/Calendar, builder de logging e
+  serialização de `LocalUserPrincipal`.
+- 20 `EI_EXPOSE_REP2` em construtores de beans, ports, repositories, `JdbcTemplate`,
+  `ObjectMapper` e cache stores foram classificados como falsos positivos e suprimidos apenas
+  nos construtores canônicos, com justificativa. `config/spotbugs/exclude.xml` continua vazio.
+- Testes novos cobrem `create(null)` sem interação com ports e timezones nulos/malformados;
+  o contrato HTTP, JSON, schema, migrations e arquitetura permanecem inalterados.
+- Gates Java 21 concluídos nesta etapa: `spotless:check test` passou com 257 testes e
+  `verify -Pquality` passou com SpotBugs zerado. Pendências: integração/all-tests, review
+  independente no SHA final e aceite do owner.
+  A fase 09-A segue `doing` até PR canário e configuração remota.
 
 Iniciar a fase 07.5 preservando a futura migration `V7__tenant_portfolio.sql` e implementando o
 código que usa esse schema. A fase 08 mantém `V8`; aplicá-la antes de `V7` quebraria a ordem

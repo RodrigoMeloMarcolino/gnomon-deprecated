@@ -212,7 +212,8 @@ This is a **Java 21 + Spring Boot 4 + Maven** project. Non-negotiable rules:
 
 When completing an assisted task, run at minimum `./mvnw spotless:check` and `./mvnw test`
 before declaring done. Prefer `./mvnw verify -Pintegration` when the change touches persistence,
-transactions, scheduling, or security.
+transactions, scheduling, or security. A PR also requires synchronized documentation, applicable
+gates green, independent review evidence for the current SHA, owner acceptance and treated risks.
 
 ### Testing standards
 
@@ -234,6 +235,7 @@ A task is considered done only when:
 * Relevant tests are defined, added, or updated.
 * Validation steps are clear.
 * Known risks or follow-ups are documented.
+* The independent review evidence and owner acceptance refer to the current head SHA.
 * The user can continue confidently from the current state.
 
 ---

@@ -29,6 +29,10 @@ public final class PublicCatalogCache implements PublicCatalogCachePort {
   private final Duration ttl;
   private final Duration versionTtl;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public PublicCatalogCache(CacheStore store, ObjectMapper objectMapper, Duration ttl) {
     this.store = store;
     this.objectMapper = objectMapper;

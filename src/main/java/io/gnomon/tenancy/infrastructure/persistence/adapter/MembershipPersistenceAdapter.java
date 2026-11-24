@@ -17,6 +17,10 @@ public class MembershipPersistenceAdapter implements MembershipRepository {
 
   private final SpringDataMembershipRepository repository;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public MembershipPersistenceAdapter(SpringDataMembershipRepository repository) {
     this.repository = repository;
   }

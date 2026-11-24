@@ -14,6 +14,10 @@ public class SlotRetentionBatchService {
   private final SlotRetentionPolicy policy;
   private final Clock clock;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public SlotRetentionBatchService(
       SlotRetentionRepository slots, SlotRetentionPolicy policy, Clock clock) {
     this.slots = slots;

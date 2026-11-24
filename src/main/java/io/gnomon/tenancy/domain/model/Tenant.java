@@ -1,9 +1,9 @@
 package io.gnomon.tenancy.domain.model;
 
 import io.gnomon.tenancy.domain.exception.TenancyException;
+import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.zone.ZoneRulesException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
@@ -94,9 +94,12 @@ public final class Tenant {
   }
 
   private static String validTimezone(String value) {
+    if (value == null) {
+      throw new TenancyException("invalid_timezone", "timezone must be a valid IANA zone");
+    }
     try {
       return ZoneId.of(value).getId();
-    } catch (NullPointerException | ZoneRulesException exception) {
+    } catch (DateTimeException exception) {
       throw new TenancyException("invalid_timezone", "timezone must be a valid IANA zone");
     }
   }

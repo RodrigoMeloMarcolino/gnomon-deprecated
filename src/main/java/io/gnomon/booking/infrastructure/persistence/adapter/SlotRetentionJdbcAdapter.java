@@ -28,6 +28,10 @@ public class SlotRetentionJdbcAdapter implements SlotRetentionRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public SlotRetentionJdbcAdapter(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }

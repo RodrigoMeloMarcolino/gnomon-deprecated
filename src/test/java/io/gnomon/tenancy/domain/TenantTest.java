@@ -31,6 +31,16 @@ class TenantTest {
   }
 
   @Test
+  void create_withNullOrMalformedTimezone_shouldRejectWithStableCode() {
+    for (String timezone : new String[] {null, "", "not a zone"}) {
+      assertThatThrownBy(() -> Tenant.create("Tenant", "tenant", timezone, "BRL", NOW))
+          .isInstanceOf(TenancyException.class)
+          .extracting(exception -> ((TenancyException) exception).code())
+          .isEqualTo("invalid_timezone");
+    }
+  }
+
+  @Test
   void create_withNonCanonicalSlug_shouldReject() {
     assertThatThrownBy(
             () -> Tenant.create("Tenant", "Tenant With Spaces", "America/Fortaleza", "BRL", NOW))

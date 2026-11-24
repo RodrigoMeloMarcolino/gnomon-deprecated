@@ -1,0 +1,41 @@
+name: merge-gate
+on: [pull_request]
+permissions: {contents: read, pull-requests: read, issues: read}
+concurrency: {group: merge-gate-${{ github.event.pull_request.number }}, cancel-in-progress: true}
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    outputs: {integration: "${{ steps.risk.outputs.integration }}"}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - id: files
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: echo "files=$(gh api --paginate 'repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files' | jq -sc '[.[].filename]')" >> "$GITHUB_OUTPUT"
+      - id: risk
+        env: {PR_FILES: "${{ steps.files.outputs.files }}"}
+        run: node scripts/ci/classify-risk.mjs >> "$GITHUB_OUTPUT"
+  quality:
+    needs: classify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with: {distribution: temurin, java-version: '21', cache: maven}
+      - run: ./mvnw --batch-mode spotless:check verify -Pquality
+  integration:
+    needs: classify
+    if: needs.classify.outputs.integration == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with: {distribution: temurin, java-version: '21', cache: maven}
+      - run: ./mvnw --batch-mode verify -Pintegration
+  merge-gate:
+    needs: [classify, quality, integration]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: test "${{ needs.quality.result }}" = success && test "${{ needs.integration.result }}" != failure

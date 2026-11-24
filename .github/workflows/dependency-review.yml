@@ -1,0 +1,11 @@
+name: dependency-review
+on: [pull_request]
+permissions: {contents: read}
+concurrency: {group: dependency-review-${{ github.event.pull_request.number }}, cancel-in-progress: true}
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/dependency-review-action@05fe4576374b728f0c523d6a13d64c25081e0803
+        with: {fail-on-severity: moderate}

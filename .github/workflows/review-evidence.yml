@@ -1,0 +1,29 @@
+name: review-evidence
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+  issue_comment:
+    types: [created, edited]
+permissions: {contents: read, pull-requests: read, issues: read}
+concurrency: {group: review-evidence-${{ github.event.pull_request.number || github.event.issue.number }}, cancel-in-progress: true}
+jobs:
+  evidence:
+    if: github.event_name == 'pull_request_target' || github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with: {ref: main, persist-credentials: false}
+      - name: Resolve pull request
+        id: pr
+        env: {GH_TOKEN: "${{ github.token }}", NUMBER: "${{ github.event.pull_request.number || github.event.issue.number }}"}
+        run: |
+          data="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${NUMBER}")"
+          echo "number=${NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "sha=$(jq -r .head.sha <<< "$data")" >> "$GITHUB_OUTPUT"
+      - name: Verify trusted review evidence
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"
+          PR_NUMBER: "${{ steps.pr.outputs.number }}"
+          PR_HEAD_SHA: "${{ steps.pr.outputs.sha }}"
+        run: node scripts/ci/verify-review-evidence.mjs

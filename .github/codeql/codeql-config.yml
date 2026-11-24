@@ -1,0 +1,3 @@
+name: gnomon-codeql
+queries:
+  - uses: security-extended

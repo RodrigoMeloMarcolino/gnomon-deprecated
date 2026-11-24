@@ -1,13 +1,29 @@
 # Fase 09 — Gates de CI e hardening
 
-Status: todo
+Status: doing (09-A — Development Process Hardening)
 
 ## Objetivo
 
 Qualidade automatizada no nível do Moira: gates de arquitetura, cobertura, schema drift e
 smoke E2E, com CI verde e branch protegida.
 
-## Escopo
+## 09-A — Development Process Hardening
+
+Implementa workflows versionados, Maven quality/security, review independente evidenciado por
+SHA, skills locais, Dependabot, template de PR e registro de riscos.
+
+Critérios de aceite adicionais:
+
+- [ ] PR canário prova bloqueio de ArchUnit, cobertura, SpotBugs, dependência vulnerável,
+  mudança sensível e evidência/aceite stale ou não-owner.
+- [ ] Owner ativa ruleset e secret scanning/push protection na `main` após o merge bootstrap.
+
+## 09-B — Fechamento posterior
+
+Permanece `todo`: smoke E2E completo, schema drift final e `EXPLAIN`/índices das consultas quentes
+só fecham depois dos workstreams 06, 07.5 e 08.
+
+## Escopo legado de 09-B
 
 - Testes ArchUnit: direção de dependências por módulo (`api` → `application` → `domain` ←
   `infrastructure`), domínio sem Spring/JPA, controllers finos (sem chamada direta a
@@ -39,4 +55,14 @@ smoke E2E, com CI verde e branch protegida.
 
 ## Notas de implementação
 
-(preencher ao concluir)
+- 2026-08-17: fundação 09-A adicionada; validação local, PR canário e ruleset remoto pendentes.
+- 2026-08-18: remediação do baseline SpotBugs 09-A: dos 40 findings originais, a correção
+  local pré-existente eliminou o único finding high, restando 39 medium; 19 findings reais
+  foram corrigidos e 20 `EI_EXPOSE_REP2` foram classificados pontualmente como falsos positivos
+  de referências compartilhadas gerenciadas pelo Spring. As supressões ficam somente nos
+  construtores canônicos apontados pelo relatório, com justificativa explícita; `exclude.xml`
+  permanece vazio. Nenhum contrato HTTP, schema, migration ou arquitetura foi alterado.
+- 2026-08-18: adicionados testes para `create(null)` sem chamadas a ports e para timezone nulo,
+  vazio e inválido. Em Java 21, `spotless:check test` passou com 257 testes e `verify -Pquality`
+  passou com SpotBugs zerado; PR canário, integração/all-tests, configuração remota e review
+  independente do SHA final continuam pendentes, portanto 09-A permanece `doing`.

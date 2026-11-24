@@ -29,6 +29,10 @@ public class CustomerJdbcAdapter implements CustomerRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public CustomerJdbcAdapter(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }

@@ -1,59 +1,23 @@
 # CI — GitHub Actions
 
-Pipeline de merge do Gnomon. Espelha o modelo do Moira (`lint`, `unit-tests`,
-`integration-tests`, `pull-request-approval`) adaptado ao Maven/Testcontainers.
+Os workflows usam permissões mínimas, timeout, concurrency e actions fixadas por SHA. `policy`
+valida skills e higiene; `quality` executa Spotless, unitários, ArchUnit, JaCoCo e SpotBugs;
+`integration` executa Testcontainers para mudança de código/configuração; `dependency-review` e
+`codeql` analisam dependências e código; `nightly-full` roda a suíte e OWASP completas.
 
-## Checks obrigatórios (merge na `main`)
-
-### 1. `lint`
-
-```bash
-./mvnw -B spotless:check
-```
-
-Formatação com google-java-format via Spotless. Correção local: `./mvnw spotless:apply`.
-
-### 2. `unit-tests`
+`merge-gate` classifica o diff e exige integração para código, migrations, segurança,
+configuração, Maven ou CI; documentação evita scans pesados. `review-evidence` é executado de
+`main`, sem checkout do PR, e aceita apenas o relatório para o SHA atual e
+`/accept-review <sha>` do owner.
 
 ```bash
-./mvnw -B test
+./mvnw verify -Pquality
+./mvnw verify -Pintegration
+./mvnw verify -Pall-tests,quality
+./mvnw verify -Psecurity
 ```
 
-JUnit 5 sem Spring context pesado e sem containers; inclui os testes ArchUnit de arquitetura.
-
-### 3. `integration-tests`
-
-```bash
-./mvnw -B verify -Pintegration
-```
-
-Testes marcados com a tag `integration`: `@SpringBootTest` + Testcontainers (PostgreSQL,
-Redis, Keycloak efêmeros) + REST Assured. O runner do GitHub (`ubuntu-latest`) provê Docker;
-nenhum serviço fixo no YAML — o Testcontainers governa o ciclo de vida e remove os containers
-ao final. Não é necessário aplicar migrations manualmente: Flyway roda no startup do contexto
-de teste.
-
-### 4. `pull-request-approval`
-
-Exige ≥ 1 approve de contribuidor (associação `OWNER`/`MEMBER`/`COLLABORATOR`/`CONTRIBUTOR`,
-ignora bots e o autor do PR; review contra o SHA atual), com lista de isenção por autor.
-Antes do approve, o único check que pode falhar é este.
-
-## Proteção da branch `main`
-
-- Exigir PR antes de merge.
-- **Não** usar "Required approvals = 1" nativo (não permite exceção por autor) — a regra é o
-  check `pull-request-approval`.
-- Ativar "Require status checks" marcando os 4 checks como obrigatórios.
-
-## Cache de build
-
-- Cache do repositório Maven (`~/.m2/repository`) por chave de `pom.xml`.
-- Cache de imagens Testcontainers não é configurado por padrão; pulls são feitos a cada run
-  (imagens pequenas: postgres, redis, keycloak).
-
-## Convenções
-
-- Commits e PRs em português ou inglês, seguindo o histórico do repositório.
-- Toda mudança arquitetural exige ADR no mesmo PR (ver AGENTS.md).
-- Autor isento do approval gate: `RodrigoMeloMarcolino`.
+Após o merge bootstrap, o owner configura o ruleset da `main`: PR obrigatório, branch atualizada,
+conversas resolvidas, sem force-push/deleção, e checks `merge-gate`, `codeql`,
+`dependency-review` e `review-evidence`. Habilita também Dependabot security updates, secret
+scanning e push protection. `NVD_API_KEY` permanece somente em GitHub Secrets.

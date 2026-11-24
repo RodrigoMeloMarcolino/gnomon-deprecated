@@ -14,6 +14,10 @@ public class TenantAccessService implements TenantAccessUseCase {
   private final TenantRepository tenants;
   private final MembershipRepository memberships;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+      value = "EI_EXPOSE_REP2",
+      justification =
+          "Spring-managed collaborators are intentionally shared references and are not exposed by this component.")
   public TenantAccessService(TenantRepository tenants, MembershipRepository memberships) {
     this.tenants = tenants;
     this.memberships = memberships;

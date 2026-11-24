@@ -1,9 +1,9 @@
 package io.gnomon.catalog.domain.model;
 
 import io.gnomon.catalog.domain.exception.CatalogException;
+import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.zone.ZoneRulesException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -69,9 +69,12 @@ public final class Calendar {
   }
 
   private static String validTimezone(String value) {
+    if (value == null) {
+      throw new CatalogException("invalid_timezone", "timezone must be a valid IANA zone");
+    }
     try {
       return ZoneId.of(value).getId();
-    } catch (NullPointerException | ZoneRulesException exception) {
+    } catch (DateTimeException exception) {
       throw new CatalogException("invalid_timezone", "timezone must be a valid IANA zone");
     }
   }

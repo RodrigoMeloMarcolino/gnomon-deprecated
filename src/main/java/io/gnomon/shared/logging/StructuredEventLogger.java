@@ -40,10 +40,12 @@ public final class StructuredEventLogger {
           case WARN -> logger.atWarn();
           case ERROR -> logger.atError();
         };
-    builder.addKeyValue("event_name", eventName);
-    SensitiveDataRedactor.redactMap(attributes).forEach(builder::addKeyValue);
+    builder = builder.addKeyValue("event_name", eventName);
+    for (var entry : SensitiveDataRedactor.redactMap(attributes).entrySet()) {
+      builder = builder.addKeyValue(entry.getKey(), entry.getValue());
+    }
     if (error != null) {
-      builder.setCause(error);
+      builder = builder.setCause(error);
     }
     builder.log(body);
   }

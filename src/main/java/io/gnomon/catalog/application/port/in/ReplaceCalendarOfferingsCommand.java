@@ -4,4 +4,8 @@ import java.util.Set;
 import java.util.UUID;
 
 public record ReplaceCalendarOfferingsCommand(
-    UUID actorUserId, String tenantSlug, UUID calendarId, Set<UUID> offeringIds) {}
+    UUID actorUserId, String tenantSlug, UUID calendarId, Set<UUID> offeringIds) {
+  public ReplaceCalendarOfferingsCommand {
+    offeringIds = offeringIds == null ? null : Set.copyOf(offeringIds);
+  }
+}

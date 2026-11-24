@@ -8,4 +8,8 @@ public record CustomerPage(
     int size,
     long totalElements,
     int totalPages,
-    boolean last) {}
+    boolean last) {
+  public CustomerPage {
+    content = List.copyOf(content);
+  }
+}

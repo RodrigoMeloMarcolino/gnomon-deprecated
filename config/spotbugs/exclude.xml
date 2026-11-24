@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <!-- Add only documented false positives here, with a linked issue and expiry in the comment. -->
+</FindBugsFilter>
