@@ -9,7 +9,9 @@ on:
       - "config/**"
   workflow_dispatch:
 permissions: {contents: read}
-concurrency: {group: integration-${{ github.event.pull_request.number || github.ref }}, cancel-in-progress: true}
+concurrency:
+  group: integration-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   integration:
     runs-on: ubuntu-latest
