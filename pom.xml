@@ -21,7 +21,7 @@
     <archunit.version>1.4.1</archunit.version>
     <maven-enforcer.version>3.6.2</maven-enforcer.version>
     <jacoco.version>0.8.13</jacoco.version>
-    <spotbugs-maven-plugin.version>4.9.8.1</spotbugs-maven-plugin.version>
+    <spotbugs-maven-plugin.version>4.10.5.0</spotbugs-maven-plugin.version>
     <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
     <dependency-check.version>12.1.3</dependency-check.version>
     <!-- Boot 4 não gerencia mais testcontainers/rest-assured: versões fixadas aqui -->
