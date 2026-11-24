@@ -29,7 +29,7 @@
     <rest-assured.version>6.0.1</rest-assured.version>
     <libphonenumber.version>9.0.32</libphonenumber.version>
     <springdoc.version>3.0.3</springdoc.version>
-    <opentelemetry.instrumentation.version>2.30.0</opentelemetry.instrumentation.version>
+    <opentelemetry.instrumentation.version>2.34.0</opentelemetry.instrumentation.version>
     <!-- Preloaded as a Java agent: JDK 21 containers do not allow Mockito self-attach. -->
     <argLine/>
     <!-- Tags JUnit: testes de integração rodam só com -Pintegration ou -Pall-tests -->
