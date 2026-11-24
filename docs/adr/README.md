@@ -29,6 +29,7 @@ quando herdada.
 | [0022](0022-retencao-e-escalabilidade-dos-slots.md) | Retenção e escalabilidade dos locks de slots | Accepted | Nova |
 | [0023](0023-openapi-e-compatibilidade-umbra.md) | OpenAPI e compatibilidade de integração Umbra | Accepted | Nova |
 | [0024](0024-governanca-hardening-review.md) | Governança de hardening e review independente | Accepted | Nova |
+| [0025](0025-conversao-gnomon-mock.md) | Conversão do backend Java em mock/reference do Umbra | Accepted | Transição para o sucessor Node.js |
 
 ## Convenção
 

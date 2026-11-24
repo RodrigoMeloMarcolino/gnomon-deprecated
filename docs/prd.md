@@ -1,8 +1,14 @@
 # PRD — Gnomon
 
-Versão: `0.2.2` (inclui workstream 07.5 de portfólio, ADRs 0020–0021)
-Data: 2026-07-29
-Status: aprovado para início da implementação
+Versão: `0.2.3` (baseline congelado da API `/v1` para o Umbra)
+Data: 2026-08-19
+Status: congelado como referência do `gnomon-mock`
+
+> **Transição de repositório (2026-08-19):** este documento preserva o produto e o contrato
+> implementados pelo backend Java que passa a se chamar `gnomon-mock`. O backend de produção
+> sucessor vive no novo repositório vizinho `gnomon`, em Node.js, e deve manter compatibilidade
+> observável com a API `/v1`. Evoluções de produto e decisões internas novas pertencem ao PRD e
+> aos ADRs do sucessor.
 
 ---
 

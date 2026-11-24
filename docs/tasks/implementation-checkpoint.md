@@ -1,6 +1,11 @@
 # Checkpoint de implementação paralela — fases 01–09 (pós-onda 4)
 
-Atualizado: 2026-08-18
+Atualizado: 2026-08-19
+
+> **Transição de papel:** este repositório passa a se chamar `gnomon-mock` e fica congelado como
+> implementação Java de referência da API `/v1` para o Umbra. O sucessor Node.js vive no novo
+> repositório vizinho `gnomon`, com banco próprio e booking GiST. Ver ADR 0025 e task 10. O
+> remote GitHub ainda não foi renomeado.
 
 Este arquivo é o handoff operacional para retomar a construção do backend em outra sessão sem
 reconstituir o contexto da conversa. A fonte normativa continua sendo o PRD, os ADRs, as specs e
