@@ -9,5 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/dependency-review-action@05fe4576374b728f0c523d6a13d64c25081e0803
+      - uses: actions/dependency-review-action@bbc44d14a204704ccc493733616cd1e93a0321ec
         with: {fail-on-severity: moderate}
