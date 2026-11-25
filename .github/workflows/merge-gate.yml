@@ -1,7 +1,9 @@
 name: merge-gate
 on: [pull_request]
 permissions: {contents: read, pull-requests: read, issues: read}
-concurrency: {group: merge-gate-${{ github.event.pull_request.number }}, cancel-in-progress: true}
+concurrency:
+  group: merge-gate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   classify:
     runs-on: ubuntu-latest
@@ -9,8 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
       - id: files
-        env: {GH_TOKEN: "${{ github.token }}"}
-        run: echo "files=$(gh api --paginate 'repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files' | jq -sc '[.[].filename]')" >> "$GITHUB_OUTPUT"
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          files=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" |
+            jq -sc '[.[][] | .filename]')
+          echo "files=$files" >> "$GITHUB_OUTPUT"
       - id: risk
         env: {PR_FILES: "${{ steps.files.outputs.files }}"}
         run: node scripts/ci/classify-risk.mjs >> "$GITHUB_OUTPUT"
@@ -38,4 +47,19 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - run: test "${{ needs.quality.result }}" = success && test "${{ needs.integration.result }}" != failure
+      - name: Check required job results
+        shell: bash
+        env:
+          CLASSIFY_RESULT: ${{ needs.classify.result }}
+          QUALITY_RESULT: ${{ needs.quality.result }}
+          INTEGRATION_REQUIRED: ${{ needs.classify.outputs.integration }}
+          INTEGRATION_RESULT: ${{ needs.integration.result }}
+        run: |
+          echo "classify=$CLASSIFY_RESULT quality=$QUALITY_RESULT integration_required=$INTEGRATION_REQUIRED integration=$INTEGRATION_RESULT"
+
+          [[ "$CLASSIFY_RESULT" == "success" && "$QUALITY_RESULT" == "success" ]] || exit 1
+
+          case "$INTEGRATION_REQUIRED/$INTEGRATION_RESULT" in
+            true/success|false/skipped) exit 0 ;;
+            *) exit 1 ;;
+          esac
