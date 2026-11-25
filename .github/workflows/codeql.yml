@@ -19,4 +19,4 @@ jobs:
       - uses: github/codeql-action/init@f52b05f4acaaa234e44466e66d29050e135ea9ef
         with: {languages: java-kotlin, config-file: .github/codeql/codeql-config.yml, build-mode: manual}
       - run: ./mvnw --batch-mode -DskipTests package
-      - uses: github/codeql-action/analyze@f52b05f4acaaa234e44466e66d29050e135ea9ef
+      - uses: github/codeql-action/analyze@7211b7c8077ea37d8641b6271f6a365a22a5fbfa
